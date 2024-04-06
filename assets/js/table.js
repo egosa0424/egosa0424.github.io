@@ -1,14 +1,23 @@
 // Difficulty Table
-let mark = "",
-  data_link = "";
+let mark = "";
+let data_link = "";
 $(function () {
-  $.getJSON($("meta[name=bmstable]").attr("content"), function (header) {
+  async function getJSON() {
+    const response = await fetch(
+      document.querySelector("meta[name=bmstable]").getAttribute("content")
+    );
+    const header = await response.json();
     document.getElementById("changelog").value = "Loading...";
-    mark = header.symbol;
+    if (header.symbol) mark = header.symbol;
     if (header.data_url) data_link = header.data_url;
+    if (header.level_order) {
+      const enumOrder = header.level_order.map((e) => mark + e);
+      DataTable.enum(enumOrder);
+    }
     viewChangelog();
     makeBMSTable();
-  });
+  }
+  if (document.querySelector("meta[name=bmstable]")) getJSON();
 });
 
 // Changelog
@@ -30,7 +39,7 @@ function viewChangelog() {
 
 // BMS table
 function makeBMSTable() {
-  let bmsTable = new DataTable("#table_int", {
+  let table = new DataTable("#table_int", {
     paging: false,
     info: false,
     lengthChange: false,
@@ -44,18 +53,21 @@ function makeBMSTable() {
       typeof tableColumns === "undefined" ? defaultColumns : tableColumns,
 
     createdRow: function (row, data) {
-      if (data.state == 1) $(row).addClass("table-primary");
-      if (data.state == 2) $(row).addClass("table-warning");
-      if (data.state == 3) $(row).addClass("table-success");
-      if (data.state == 4) $(row).addClass("table-secondary");
-      if (data.state == 5) $(row).addClass("table-info");
+      const rowColor = {
+        1: "table-primary",
+        2: "table-warning",
+        3: "table-success",
+        4: "table-secondary",
+        5: "table-info",
+      };
+      if (data.state) row.classList.add(rowColor[data.state]);
     },
 
     initComplete: function () {
       // Make Changelog
-      makeChangelog(bmsTable);
+      makeChangelog(table);
       // Filter
-      makeFilter(bmsTable);
+      makeFilter(table);
     },
   });
 }
@@ -76,43 +88,18 @@ function makeChangelog(table) {
     return aDate < bDate ? 1 : aDate > bDate ? -1 : 0;
   });
   const changelogData = data
-    .filter(function (song) {
-      return !!song.date;
-    })
     .map(function (song) {
-      const date_ = new Date(song.date);
-      const dateStr =
-        date_.getFullYear() +
-        "." +
-        ("0" + (date_.getMonth() + 1)).slice(-2) +
-        "." +
-        ("0" + date_.getDate()).slice(-2);
+      const dateStr = formatDateString(song.date);
       if (song.state == "special") {
-        return "(" + dateStr + ")" + " " + song.title;
+        return `(${dateStr}) ${song.title}`;
       } else {
-        return (
-          "(" +
-          dateStr +
-          ") " +
-          mark +
-          song.level +
-          " " +
-          song.title +
-          " Added."
-        );
+        return `(${dateStr}) ${mark}${song.level} ${song.title} Added.`;
       }
     })
     .join("\n");
   document.getElementById("changelog").value = changelogData;
   const lastUpdateTableDate = data.slice(0, 1).map(function (diffTable) {
-    const date_ = new Date(diffTable.date);
-    const dateStr =
-      date_.getFullYear() +
-      "." +
-      ("0" + (date_.getMonth() + 1)).slice(-2) +
-      "." +
-      ("0" + date_.getDate()).slice(-2);
-    return dateStr;
+    return formatDateString(diffTable.date);
   });
   document.getElementById("update").innerText =
     "Last Update : " + lastUpdateTableDate;
@@ -120,70 +107,69 @@ function makeChangelog(table) {
 
 // Column Filter
 function makeFilter(table) {
-  table.columns(0).every(function () {
-    const column = this;
-    let select = $(
-      "<div class='float-start'>" +
-        "Filter by Level: " +
-        "<select class='fs-6'>" +
-        "<option value=''>All</option>" +
-        "</select>" +
-        "</div>"
-    )
-      .prependTo($("#table_int_wrapper"))
-      .on("change", function () {
-        const val = $.fn.dataTable.util.escapeRegex(
-          $(this).find("select").val()
-        );
-        column.search(val ? "^" + val + "$" : "", true, false).draw();
-      });
-    column
-      .data()
-      .unique()
-      .sort(function (a, b) {
-        return parseInt(a) - parseInt(b);
-      })
-      .each(function (d, j) {
-        select
-          .find("select")
-          .append("<option value='" + mark + d + "'>" + d + "</option>");
-      });
+  const column = table.column(0);
+  const filterText = "Filter by Level: ";
+  const selectContainer = document.createElement("div");
+  selectContainer.classList.add("dt-length");
+
+  const select = document.createElement("select");
+  select.classList.add("form-select", "form-select-sm");
+  select.add(new Option("All", ""));
+
+  select.addEventListener("change", function () {
+    const val = DataTable.util.escapeRegex(this.value);
+    column.search(val ? "^" + val + "$" : "", true, false).draw();
   });
+
+  selectContainer.appendChild(document.createTextNode(filterText));
+  selectContainer.appendChild(select);
+
+  document
+    .querySelector("#table_int_wrapper > div:nth-child(1) > .me-auto")
+    .prepend(selectContainer);
+
+  column
+    .data()
+    .unique()
+    .sort(function (a, b) {
+      return parseInt(a) - parseInt(b);
+    })
+    .each(function (d, j) {
+      const option = document.createElement("option");
+      option.value = mark + d;
+      option.textContent = d;
+      select.appendChild(option);
+    });
+}
+
+// Date Format
+function formatDateString(dateStr) {
+  const date_ = new Date(dateStr);
+  const year = date_.getFullYear();
+  const month = String(date_.getMonth() + 1).padStart(2, "0");
+  const day = String(date_.getDate()).padStart(2, "0");
+  return `${year}.${month}.${day}`;
 }
 
 const tableData = {
   tableLevel: function (data) {
-    return mark + data;
+    return `${mark}${data}`;
   },
 
   tableTitle: function (data, type, row) {
-    let lr2irBaseURL =
-      "http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=ranking&bmsmd5=";
-    lr2irBaseURL += row.md5;
-    return "<a href='" + lr2irBaseURL + "' target='_blank'>" + data + "</a>";
+    const lr2irBaseURL = `http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=ranking&bmsmd5=${row.md5}`;
+    return `<a href="${lr2irBaseURL}" target="_blank">${data}</a>`;
   },
 
   tableScore: function (data) {
-    let scoreBaseURL = "http://www.ribbit.xyz/bms/score/view?md5=";
-    scoreBaseURL += data;
-    return (
-      "<a href='" +
-      scoreBaseURL +
-      "' target='_blank'><i class='fas fa-lg fa-music'></i></a>"
-    );
+    const scoreBaseURL = `https://ez2pattern.kro.kr/bms/chart?md5=${data}`;
+    return `<a href="${scoreBaseURL}" target="_blank"><i class="fas fa-lg fa-music"></i></a>`;
   },
 
   tableMovie: function (data) {
-    let movieURL = "https://www.youtube.com/watch?v=";
-    movieURL += data.slice(-11);
+    const movieURL = `https://www.youtube.com/watch?v=${data.slice(-11)}`;
     if (data) {
-      return (
-        "<a href='" +
-        movieURL +
-        "' target='_blank'>" +
-        "<i class='fas fa-lg fa-play'></i>" +
-        "</a>"
-      );
+      return `<a href="${movieURL}" target="_blank"><i class="fas fa-lg fa-play"></i></a>`;
     } else {
       return "";
     }
@@ -192,94 +178,39 @@ const tableData = {
   tableArtist: function (data, type, row) {
     let artistStr = "";
     if (row.url) {
-      if (data) {
-        artistStr =
-          "<a href='" + row.url + "' target='_blank'>" + data + "</a>";
-      } else {
-        artistStr =
-          "<a href='" + row.url + "' target='_blank'>" + row.url + "</a>";
-      }
-    } else {
-      if (data) {
-        artistStr = data;
-      }
+      artistStr = `<a href='${row.url}' target='_blank'>${data || row.url}</a>`;
     }
     if (row.url_pack) {
       if (row.name_pack) {
-        artistStr +=
-          "<br>(<a href='" +
-          row.url_pack +
-          "' target='_blank'>" +
-          row.name_pack +
-          "</a>)";
+        artistStr += `<br />(<a href='${row.url_pack}' target='_blank'>${row.name_pack}</a>)`;
       } else {
-        artistStr +=
-          "<br>(<a href='" +
-          row.url_pack +
-          "' target='_blank'>" +
-          row.url_pack +
-          "</a>)";
+        artistStr += `<br />(<a href='${row.url_pack}' target='_blank'>${row.url_pack}</a>)`;
       }
-    } else {
-      if (row.name_pack) {
-        artistStr += "<br>(" + row.name_pack + ")";
-      }
+    } else if (row.name_pack) {
+      artistStr += `<br />(${row.name_pack})`;
     }
     return artistStr;
   },
 
   tableChart: function (data, type, row) {
-    if (row.maker_site) {
-      if (row.url_diff) {
-        return (
-          "<a href='" +
-          row.url_diff +
-          "'>" +
-          "<i class='fas fa-lg fa-arrow-down'></i>" +
-          "</a><br>(<a href='" +
-          row.maker_site +
-          "'>" +
-          data +
-          "</a>)"
-        );
+    if (row.url_diff) {
+      if (data) {
+        return `<a href='${row.url_diff}' target='_blank'>${data}</a>`;
       } else {
-        return "同梱<br>(<a href='" + row.maker_site + "'>" + data + "</a>)";
+        return `<a href='${row.url_diff}'><i class='fa-solid fa-arrow-down fa-lg'></i></a>`;
       }
     } else {
-      if (row.url_diff) {
-        if (data) {
-          return (
-            "<a href='" + row.url_diff + "' target='_blank'>" + data + "</a>"
-          );
-        } else {
-          return (
-            "<a href='" +
-            row.url_diff +
-            "'>" +
-            "<i class='fas fa-lg fa-arrow-down'></i>" +
-            "</a>"
-          );
-        }
+      if (data) {
+        return data;
       } else {
-        if (data) {
-          return data;
-        } else {
-          return "同梱";
-        }
+        return "同梱";
       }
     }
   },
 
   tableDate: function (data) {
     if (data) {
-      const date_ = new Date(data);
-      const dateString =
-        date_.getFullYear() +
-        "." +
-        ("0" + (date_.getMonth() + 1)).slice(-2) +
-        "." +
-        ("0" + date_.getDate()).slice(-2);
-      return dateString;
+      return formatDateString(data);
     } else {
       return "";
     }
@@ -295,7 +226,6 @@ const defaultColumns = [
     title: "Level",
     width: "1%",
     data: "level",
-    type: "natural-nohtml",
     render: tableData.tableLevel,
   },
   {

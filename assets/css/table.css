@@ -46,14 +46,23 @@
 }
 
 #table_int a {
-  color: #007bff;
+  color: var(--bs-blue);
   text-decoration: none;
-  background-color: transparent;
 }
 
 #table_int th {
-  vertical-align: middle;
+  text-align: center !important;
+  vertical-align: middle !important;
   font-size: 0.95em;
+}
+
+#table_int td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+#table_int > tbody > tr {
+  background-color: var(--bs-table-bg);
 }
 
 /* etc */
@@ -84,15 +93,6 @@
   font-size: 1.25em;
   font-weight: 700;
   color: #484d55;
-}
-
-/* for table vertical-align */
-.table > thead > tr > th {
-  vertical-align: middle;
-}
-
-.table > tbody > tr > td {
-  vertical-align: middle;
 }
 
 :root {
