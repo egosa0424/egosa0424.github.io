@@ -801,9 +801,6 @@
 #WAVLT BGM02.ogg
 #WAVLU BGM03.ogg
 #WAVLV BGM04.ogg
-
-
-*---------------------- EXPANSION FIELD
 #BMP01 BGA.wmv
 
 
@@ -3002,7 +2999,7 @@
 
 #12201:AC
 #12201:A9
-#12201:00
+#12201:A6
 #12201:00
 #12201:00
 #12201:00
