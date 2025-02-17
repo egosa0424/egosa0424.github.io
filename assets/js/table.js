@@ -1,7 +1,7 @@
 // Difficulty Table
 let mark = "";
 let data_link = "";
-$(function () {
+document.addEventListener("DOMContentLoaded", function () {
   async function getJSON() {
     const response = await fetch(
       document.querySelector("meta[name=bmstable]").getAttribute("content")
@@ -162,7 +162,7 @@ const tableData = {
   },
 
   tableScore: function (data) {
-    const scoreBaseURL = `https://ez2pattern.kro.kr/bms/chart?md5=${data}`;
+    const scoreBaseURL = `https://bms-score-viewer.pages.dev/view?md5=${data}`;
     return `<a href="${scoreBaseURL}" target="_blank"><i class="fas fa-lg fa-music"></i></a>`;
   },
 
