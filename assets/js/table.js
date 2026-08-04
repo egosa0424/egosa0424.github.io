@@ -4,7 +4,7 @@ let data_link = "";
 document.addEventListener("DOMContentLoaded", function () {
   async function getJSON() {
     const response = await fetch(
-      document.querySelector("meta[name=bmstable]").getAttribute("content")
+      document.querySelector("meta[name=bmstable]").getAttribute("content"),
     );
     const header = await response.json();
     document.getElementById("changelog").value = "Loading...";
@@ -157,8 +157,8 @@ const tableData = {
   },
 
   tableTitle: function (data, type, row) {
-    const lr2irBaseURL = `http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=ranking&bmsmd5=${row.md5}`;
-    return `<a href="${lr2irBaseURL}" target="_blank">${data}</a>`;
+    const stellaIrBaseURL = `https://ir.stellabms.xyz/charts/${row.md5}`;
+    return `<a href="${stellaIrBaseURL}" target="_blank">${data}</a>`;
   },
 
   tableScore: function (data) {
@@ -245,7 +245,7 @@ const defaultColumns = [
     render: tableData.tableMovie,
   },
   {
-    title: "Title<br>(LR2IR)",
+    title: "Title<br>(STELLA IR)",
     width: "30%",
     data: "title",
     render: tableData.tableTitle,
@@ -268,6 +268,7 @@ const defaultColumns = [
     title: "Date",
     width: "5%",
     data: "date",
+    className: "font-monospace",
     render: tableData.tableDate,
   },
   {

@@ -1,29 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
     <meta name="bmstable" content="assets/json/header.json" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+      content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>七海千秋</title>
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"
       rel="stylesheet"
-    />
+      crossorigin="anonymous" />
     <link
-      href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css"
       rel="stylesheet"
-    />
+      crossorigin="anonymous" />
     <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&display=swap"
       rel="stylesheet"
-    />
+      crossorigin="anonymous" />
     <link
-      href="https://cdn.datatables.net/v/bs5/dt-2.2.2/datatables.min.css"
+      href="https://cdn.datatables.net/v/bs5/dt-3.0.1/datatables.min.css"
       rel="stylesheet"
-    />
+      crossorigin="anonymous" />
     <link href="assets/css/styles.css" rel="stylesheet" />
     <link href="assets/css/table.css" rel="stylesheet" />
   </head>
@@ -39,8 +38,7 @@
           data-bs-target="#navbarResponsive"
           aria-controls="navbarResponsive"
           aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+          aria-label="Toggle navigation">
           Menu
           <i class="fas fa-bars"></i>
         </button>
@@ -56,7 +54,7 @@
             <li class="nav-item">
               <a
                 class="nav-link px-lg-3 py-3 py-lg-4"
-                href="http://www.dream-pro.info/~lavalse/LR2IR/search.cgi?mode=mypage&playerid=084597"
+                href="https://ir.stellabms.xyz/players/84597"
                 >LR2IR</a
               >
             </li>
@@ -72,7 +70,9 @@
       </div>
     </nav>
     <!-- Page Header-->
-    <header class="masthead" style="background-image: url('assets/img/bg.jpg')">
+    <header
+      class="masthead"
+      style="background-image: url(&quot;assets/img/bg.jpg&quot;)">
       <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
           <div class="col-md-12 col-lg-11 col-xl-10">
@@ -91,8 +91,7 @@
           <div class="col-md-12 col-lg-11 col-xl-10">
             <div class="table-responsive text-center">
               <table
-                class="diffflame table table-sm text-gray-900 fw-bold table-striped"
-              >
+                class="diffflame table table-sm text-gray-900 fw-bold table-striped">
                 <colgroup>
                   <col style="width: 125px" />
                   <col style="width: 150px" />
@@ -138,8 +137,7 @@
             <p>
               <button
                 id="show_log"
-                class="btn btn-secondary btn-icon text-decoration-none rounded"
-              >
+                class="btn btn-secondary btn-icon text-decoration-none rounded">
                 View Changelog
               </button>
             </p>
@@ -147,17 +145,15 @@
               <textarea
                 name="changelog"
                 id="changelog"
-                class="fs-6"
+                class="fs-6 font-monospace"
                 cols="40"
                 rows="5"
-                readonly
-              ></textarea>
+                readonly></textarea>
             </p>
             <div class="table-responsive">
               <table
                 id="table_int"
-                class="table table-sm table-striped table-bordered table-hover fs-6 text-gray-900 text-center m-auto"
-              ></table>
+                class="table table-sm table-striped table-bordered table-hover fs-6 text-gray-900 text-center m-auto"></table>
             </div>
           </div>
         </div>
@@ -179,8 +175,7 @@
               </li>
               <li class="list-inline-item">
                 <a
-                  href="https://www.youtube.com/playlist?list=PLyfZugEwPZtU3u0uHl1FIO9sbPUwbnGKA"
-                >
+                  href="https://www.youtube.com/playlist?list=PLyfZugEwPZtU3u0uHl1FIO9sbPUwbnGKA">
                   <span class="fa-stack fa-lg">
                     <i class="fas fa-circle fa-stack-2x"></i>
                     <i class="fab fa-youtube fa-stack-1x fa-inverse"></i>
@@ -193,10 +188,15 @@
       </div>
     </footer>
     <!-- Scripts-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0-beta.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/v/bs5/dt-2.2.2/datatables.min.js"></script>
-    <script src="https://cdn.datatables.net/plug-ins/2.2.2/sorting/enum.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.datatables.net/v/bs5/dt-3.0.1/datatables.min.js"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.datatables.net/plug-ins/3.0.1/sorting/enum.min.js"
+      crossorigin="anonymous"></script>
     <script src="assets/js/scripts.js"></script>
     <script src="assets/js/table.js"></script>
   </body>
