@@ -51,6 +51,7 @@
 }
 
 #table_int th {
+  font-family: var(--bs-font-sans-serif) !important;
   text-align: center !important;
   vertical-align: middle !important;
   font-size: 0.95em;
